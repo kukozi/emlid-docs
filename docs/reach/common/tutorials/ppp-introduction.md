@@ -38,7 +38,7 @@ Post-Processed PPP has both advantages and disadvantages in comparison with [PPK
 | Advantages | Disadvantages |
 | :----------: | :-------------: |
 | Only one receiver is needed| The time required to move from Float to a fixed solution |
-| The position can be highly accurate determined at any place on the Earth | Most PPP services only allow using Static processing currently | 
+| The position can be highly accurate determined at any place on the Earth | Most PPP services only allow using Static processing currently |
 | The position is determined with absolute accuracy | Most PPP services only allow GPS processing currently |
 |  | Most PPP services only allow multi-frequency processing |
 
@@ -46,30 +46,11 @@ Post-Processed PPP has both advantages and disadvantages in comparison with [PPK
 
 ## PPP services overview
 
-There are several PPP services available. In this guide, we will take a closer look at the [US NOAA's OPUS PPP service](https://www.ngs.noaa.gov/OPUS/) and the [Canadian NRCAN CSRS-PPP service.](https://webapp.geod.nrcan.gc.ca/geod/tools-outils/ppp.php)
+There are several PPP services available. In this guide, we will take a closer look at the [Canadian NRCAN CSRS-PPP service.](https://webapp.geod.nrcan.gc.ca/geod/tools-outils/ppp.php)
 
 !!! danger ""
 
     AUSPOS, a PPP service widely used in the Asia-Pacific region, doesn't currently support L2C observations from Reach. The L2C support should be added in the future.
-
-### NOAA's OPUS PPP service
-
-Online Positioning User Service (OPUS) is provided by the National Oceanic and Atmospheric Administration (NOAA).
-
-OPUS PPP service uses dual-frequency GPS data for solution computation and supports the Static mode only. The Static data is required to be recorded on the stationary unmoving receiver.
-
-There are 2 ways you can process the data in OPUS:
-
-- Static (for data that are 2 to 48 hours in duration)
-- Rapid-Static (for data that are 15 minutes to 2 hours in duration)
-
-The Static and Rapid-Static methods use different processing software and provide pretty similar horizontal accuracy. The Rapid-Static processing has more strict requirements for the data quality in comparison with the Static approach. Moreover, Rapid-Static processing is available only for some regions. <sup>[1](#myfootnote1)</sup>
-
-!!! note ""
-
-    In this guide, we will show you how to process raw data from Reach RS2 using the Static method.
-
-You can learn more about NOAA's OPUS PPP service on their [official site.](https://www.ngs.noaa.gov/OPUS/about.jsp)
 
 ### NRCAN CSRS-PPP service
 
@@ -102,21 +83,16 @@ Place a Reach device precisely above the marked point on the tripod and level it
 ## Recording RINEX data on Reach for PPP
 
 - Go to the *RTK Settings* tab
-- Choose **Static** Positioning mode, enable **GPS** only and set up the update rate to **1 Hz**
+- Choose **Static** Positioning mode, enable **GPS** and **GLONASS** and set up the update rate to **1 Hz**
 
 !!! tip ""
 
-    While OPUS handles only GPS data, NRCAN is able to work with both GPS and GLONASS.
+    NRCAN PPP service is able to work with both GPS and GLONASS, while OPUS service can work with GPS only.
 
 <div style="text-align: center;"><img src="../img/reach/ppp-introduction/rtk-settings.png" style="width: 600px;"></div>
 
 - Navigate to the *Logging* tab
-- Select RINEX 2.10 **Raw data** format.
-
-!!! tip ""
-
-    OPUS only works with RINEX 2.XX format of raw data recorded on Reach. As for NRCAN, it accepts RINEX 3.XX files as well.
-
+- Select RINEX 3.10 **Raw data** format.
 - Enable raw data logging and record the data for 2.5 hours at least
 
 !!! tip ""
@@ -152,13 +128,8 @@ In case you log raw data in UBX format, you can convert them manually in RTKLIB.
 <div style="text-align: center;"><img src="../img/reach/ppp-introduction/RTKCONV.png" style="width: 600px;"></div>
 
 - Push the **Options** button
-- Choose RINEX Version 2.XX
-
-!!! tip ""
-
-    OPUS only works with RINEX 2.XX format of raw data recorded on Reach. As for NRCAN, it accepts RINEX 3.XX files as well.
-
-- For OPUS, turn on the GPS satellite system only. For NRCAN, you may turn on GPS and GLONASS satellite systems
+- Choose RINEX Version 3.XX
+- Turn on GPS and GLONASS satellite systems
 - Enable L1 and L2 frequencies in the Frequencies tab
 
 <div style="text-align: center;"><img src="../img/reach/ppp-introduction/RTKCONV-Options.png" style="width: 600px;"></div>
@@ -166,29 +137,9 @@ In case you log raw data in UBX format, you can convert them manually in RTKLIB.
 - Click on the **OK** button to save changes
 - Push on the **Convert** button to start conversion process
 
-In the result, you will get the *.obs and *.nav files. 
+In the result, you will get the *.obs and *.nav files.
 
-## Submitting data to PPP service
-
-### NOAA's OPUS PPP
-
-- Go to the [NOAA's OPUS PPP site](https://www.ngs.noaa.gov/OPUS/)
-- Click on the **Choose file** button and browse for raw*.obs file you would like to process
-- Choose the NONE option in the Antenna field
-
-!!! note ""
-
-    We are currently in process of getting antenna details for PPP services.
-
-- Type in the Antenna Height value. Consider this value as a pole height plus 134 mm
-- Enter your email address to get the results
-- Click on **Upload to Static** button to submit the data
-
-<div style="text-align: center;"><img src="../img/reach/ppp-introduction/OPUS.png" style="width: 600px;"></div>
-
-OPUS will send the file with the solution to your email address.
-
-### NRCAN CSRS-PPP
+## Submitting data to NRCAN CSRS-PPP service
 
 - Click on **Sign in** button and enter your login and password to access [NRCAN CSRS-PPP](https://webapp.geod.nrcan.gc.ca/geod/tools-outils/ppp.php) or create a new account in case you do not have it yet
 - In the **Email for results** field, enter your email address to get the results
@@ -204,16 +155,6 @@ NRCAN CSRS-PPP will send the file with solution to your email address.
 ## Results assessment
 
 After you get the solution report, it might be useful to check how accurate the results are.
-
-### NOAA's OPUS PPP
-
-In the solution report, you will get the name of the used reference frame, the XYZ and LLH coordinates of the point and accuracy estimation in meters. Additionally, you can check these fields: OBS USED, FIXED AMB, OVERALL RMS. 
-
-The most accurate OPUS solutions have the following characteristics:
-
-- Over 90% of observations are used
-- Over 50% of ambiguities are fixed
-- Overall RMS is less than 3 cm
 
 ### NRCAN CSRS-PPP
 
@@ -252,7 +193,4 @@ Further reading:
 - [GPS Post-processing](../../common/tutorials/gps-post-processing.md)
 - [Placing the base](../../common/tutorials/placing-the-base.md)
 
-<p style="font-size:70%;"><a name="myfootnote1">1</a>: About OPUS: NOAA’s National Geodatic Survey site. URL:  https://www.ngs.noaa.gov/OPUS/about.jsp</p>
-
 <p style="font-size:70%;"><a name="myfootnote2">2</a>: Tools and Applications: Natural Resources Canada site. URL: https://www.nrcan.gc.ca/maps-tools-publications/tools/geodetic-reference-systems-tools/tools-applications/10925#ppp</p>
-
